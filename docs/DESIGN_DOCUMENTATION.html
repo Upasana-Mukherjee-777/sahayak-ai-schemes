@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sahayak AI — Design Documentation & System Architecture</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    
+    :root {
+      --primary: #0F172A;
+      --accent: #0D9488;
+      --accent-light: #CCFBF1;
+      --text: #334155;
+      --text-dark: #0F172A;
+      --border: #E2E8F0;
+      --bg-card: #F8FAFC;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: var(--text);
+      line-height: 1.6;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px;
+      background: #FFFFFF;
+    }
+
+    h1, h2, h3, h4 {
+      color: var(--text-dark);
+      font-weight: 700;
+      line-height: 1.25;
+    }
+    h1 {
+      font-size: 2.2rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 16px;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      font-size: 1.1rem;
+      color: var(--accent);
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 32px;
+    }
+    h2 {
+      font-size: 1.4rem;
+      margin-top: 40px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    h3 { font-size: 1.1rem; margin-top: 24px; }
+
+    p, li { font-size: 0.95rem; }
+    ul, ol { padding-left: 24px; }
+    li { margin-bottom: 6px; }
+
+    .badge {
+      display: inline-block;
+      background: var(--accent-light);
+      color: #0F766E;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px;
+      margin: 20px 0;
+    }
+
+    pre, code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+    }
+    pre {
+      background: #0F172A;
+      color: #F8FAFC;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      line-height: 1.4;
+    }
+    code {
+      background: #F1F5F9;
+      color: #0F172A;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 0.9rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      text-align: left;
+    }
+    th {
+      background: var(--bg-card);
+      color: var(--text-dark);
+      font-weight: 600;
+    }
+
+    .wireframe-box {
+      font-family: 'JetBrains Mono', monospace;
+      background: #F8FAFC;
+      border: 1px solid #CBD5E1;
+      padding: 16px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      line-height: 1.35;
+      overflow-x: auto;
+      color: #1E293B;
+      margin: 16px 0;
+      white-space: pre;
+    }
+
+    @media print {
+      @page {
+        size: A4;
+        margin: 18mm 16mm;
+      }
+      body {
+        max-width: 100%;
+        padding: 0;
+        color: #0F172A;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      h1, h2, h3, h4 {
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+      .card, table, pre, .wireframe-box {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+      pre, .wireframe-box {
+        font-size: 0.72rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <span class="badge">Technical Design Document</span>
+  <h1>🏛️ Sahayak AI (सहायक AI)</h1>
+  <p class="subtitle">Government Welfare Scheme Advisor & Explainable Match Engine</p>
+
+  <p><strong>Team:</strong> Analog Roses &nbsp;|&nbsp; <strong>Event:</strong> Hack for Social Cause &nbsp;|&nbsp; <strong>Date:</strong> October 2026</p>
+
+  <div class="card">
+    <strong>Executive Summary:</strong> Sahayak AI is a privacy-first digital public service discovery tool that eliminates welfare exclusion by indexing <strong>2,066 Indian Central and State government schemes</strong> over an explainable 7-dimension scoring engine. It collects <em>zero personally identifiable information (no Aadhaar, no bank accounts)</em> and transparently reveals why each scheme was recommended before directing the citizen to official portals.
+  </div>
+
+  <h2>1. Problem Space & Need Analysis</h2>
+  <ul>
+    <li><strong>Information Fragmentation:</strong> Welfare policies are spread across dozens of departmental silos with varying guidelines.</li>
+    <li><strong>Exclusion Errors:</strong> Millions of eligible citizens never apply because eligibility rules are perceived as opaque.</li>
+    <li><strong>Data Privacy Hesitation:</strong> Asking citizens for Aadhaar or bank passbooks creates apprehension and fraud risk.</li>
+    <li><strong>Hallucination Hazards:</strong> Unconstrained generative AI models frequently invent false grants or incorrect eligibility criteria.</li>
+  </ul>
+
+  <h2>2. System Architecture</h2>
+  <pre>
+[ Citizen Client (React 19 + TypeScript) ]
+               │
+               ▼ HTTPS (REST)
+[ FastAPI Backend Service (:8001) ]
+       │                         │
+       ▼                         ▼
+[ 7-Factor Scoring Engine ]  [ 2,066 Scheme Offline JSON DB ]
+  * TF-IDF Text Overlap        * Curated from MyScheme Portal
+  * Demographic Rules          * Categorized by State & Needs
+  * Score Band Generator       * Direct Official Application Links
+       │
+       ▼
+[ Explainable Recommendations + 'Why Matched' Cards ]
+  </pre>
+
+  <h2>3. The 7-Factor Scoring Matrix</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Dimension</th>
+        <th>Weight</th>
+        <th>Description & Method</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Needs Relevance</strong></td>
+        <td><strong>35%</strong></td>
+        <td>TF-IDF vector text similarity between stated citizen support needs and scheme descriptions/tags.</td>
+      </tr>
+      <tr>
+        <td><strong>State Coverage Fit</strong></td>
+        <td><strong>20%</strong></td>
+        <td>100% for state matches; 85% for national Central schemes; excludes schemes of other states.</td>
+      </tr>
+      <tr>
+        <td><strong>Age Boundary Fit</strong></td>
+        <td><strong>15%</strong></td>
+        <td>Validates numerical age brackets and seniority criteria against citizen age.</td>
+      </tr>
+      <tr>
+        <td><strong>Income Fit</strong></td>
+        <td><strong>10%</strong></td>
+        <td>Matches BPL / low-income brackets with government subsidy rules.</td>
+      </tr>
+      <tr>
+        <td><strong>Gender Focus</strong></td>
+        <td><strong>10%</strong></td>
+        <td>Prioritizes women and girl-child specific programs when beneficiary is female.</td>
+      </tr>
+      <tr>
+        <td><strong>Social Category</strong></td>
+        <td><strong>5%</strong></td>
+        <td>Detects SC, ST, OBC, or minority priority criteria.</td>
+      </tr>
+      <tr>
+        <td><strong>Residence Fit</strong></td>
+        <td><strong>5%</strong></td>
+        <td>Tailors recommendations to Rural vs. Urban targeted programs.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>4. User Interface Wireframes</h2>
+
+  <h3>4.1 Citizen Intake Wizard (/find)</h3>
+  <div class="wireframe-box">
++-------------------------------------------------------------------------------+
+|  Step 1 of 4: Your Profile Basics                  [ Privacy Protected: No PII ]
++-------------------------------------------------------------------------------+
+|   Select State / UT:                          Your Age:                       |
+|   [ Uttar Pradesh                  v ]        [ 28                            ]
+|                                                                               |
+|   Gender:                                     Area of Residence:              |
+|   [ Female                         v ]        [ (o) Rural    ( ) Urban        ]
+|                                                                               |
+|   Occupation:                                 Annual Family Income:           |
+|   [ Small / Marginal Farmer        v ]        [ Below Rs. 50,000            v ]
+|                                                                               |
+|   Support Needed: [X] Agriculture & Farmers    [X] Financial Assistance       |
+|                                                                               |
+|   [ Clear Form ]                               [ View Eligible Schemes -> ]   |
++-------------------------------------------------------------------------------+
+  </div>
+
+  <h3>4.2 Recommendation Results & Explainability (/results)</h3>
+  <div class="wireframe-box">
++-------------------------------------------------------------------------------+
+|  Recommendations for Farmer Profile (Uttar Pradesh · 28y · Rural)             |
+|  2,066 schemes evaluated  ·  1,520 excluded (other states) ·  60 potential matches|
++-------------------------------------------------------------------------------+
+|  [Central]  PM Kisan Samman Nidhi Yojana              [ Score: 88% - STRONG ] |
+|  Direct income support of Rs 6,000 per year in 3 installments to farmers.     |
+|                                                                               |
+|  WHY IT MATCHED:                                                              |
+|  * Stated Need: High keyword overlap with 'farmer', 'crop', 'agriculture'     |
+|  * State Coverage: Central scheme valid across Uttar Pradesh                  |
+|  * Income Bracket: Satisfies agricultural BPL criteria                        |
+|                                                                               |
+|  [ View Score Breakdown (7 Factors) ]         [ Official Application Portal ] |
++-------------------------------------------------------------------------------+
+  </div>
+
+  <h2>5. Privacy, Security & Disclaimers</h2>
+  <ul>
+    <li><strong>Zero PII Intake:</strong> Never requires Aadhaar, phone numbers, bank accounts, or documents.</li>
+    <li><strong>Truth Anchoring:</strong> All recommendations are preliminary; users are directed to official portal links (e.g. <code>myscheme.gov.in</code>, <code>pmkisan.gov.in</code>).</li>
+    <li><strong>Deterministic Matcher:</strong> Avoids generative AI hallucinations by relying on explainable TF-IDF text metrics and objective rules.</li>
+  </ul>
+
+</body>
+</html>
