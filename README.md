@@ -161,7 +161,7 @@ python -m venv venv
 pip install -r requirements.txt
 
 # Run FastAPI server
-uvicorn backend.main:app --host 127.0.0.1 --port 8001 --reload
+uvicorn main:app --host 127.0.0.1 --port 8001 --reload
 ```
 *The backend API will start at `http://127.0.0.1:8001`. You can view Swagger documentation at `http://127.0.0.1:8001/docs`.*
 
