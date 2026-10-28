@@ -7,16 +7,28 @@ from fastapi import FastAPI, HTTPException, Query, Response, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from .models.schemes import (
-    SchemeSummary,
-    SchemeDetail,
-    PagedSchemes,
-    DatasetMeta,
-    CitizenProfile,
-    RecommendationResponse,
-    AdminSession,
-)
-from .lib.recommender import rank_schemes
+try:
+    from .models.schemes import (
+        SchemeSummary,
+        SchemeDetail,
+        PagedSchemes,
+        DatasetMeta,
+        CitizenProfile,
+        RecommendationResponse,
+        AdminSession,
+    )
+    from .lib.recommender import rank_schemes
+except (ImportError, ValueError):
+    from models.schemes import (
+        SchemeSummary,
+        SchemeDetail,
+        PagedSchemes,
+        DatasetMeta,
+        CitizenProfile,
+        RecommendationResponse,
+        AdminSession,
+    )
+    from lib.recommender import rank_schemes
 
 app = FastAPI(
     title="Sahayak AI Schemes API",

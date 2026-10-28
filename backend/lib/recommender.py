@@ -1,13 +1,22 @@
 import re
 from datetime import datetime, timezone
 from typing import List, Tuple, Dict, Any
-from ..models.schemes import (
-    SchemeSummary,
-    CitizenProfile,
-    RankedScheme,
-    ScoreComponent,
-    RecommendationResponse
-)
+try:
+    from ..models.schemes import (
+        SchemeSummary,
+        CitizenProfile,
+        RankedScheme,
+        ScoreComponent,
+        RecommendationResponse
+    )
+except (ImportError, ValueError):
+    from models.schemes import (
+        SchemeSummary,
+        CitizenProfile,
+        RankedScheme,
+        ScoreComponent,
+        RecommendationResponse
+    )
 
 KEYWORD_MAP: Dict[str, List[str]] = {
     "education & scholarships": ["scholarship", "education", "student", "study", "tuition", "school", "college", "fellowship", "academic"],
